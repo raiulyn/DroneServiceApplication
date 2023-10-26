@@ -3,16 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace DroneServiceApplication
 {
+    /*
+    6.1 Ceate a separate class file to hold the data items of the Drone. Use separate getter and setter methods, 
+        ensure the attributes are private and the accessor methods are public. Add a display method that returns a string for Client Name and Service Cost. 
+        Add suitable code to the Client Name and Service Problem accessor methods so the data is formatted as Title case or Sentence case. 
+        Save the class as “Drone.cs”.
+     */
+
     internal class Drone
     {
-        public string clientName = string.Empty;
-        public string droneModel = string.Empty;
-        public string serviceProblem = string.Empty;
-        public int serviceCost = 0;
-        public string serviceTag = string.Empty;
+        TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+
+        private string clientName = string.Empty;
+        private string droneModel = string.Empty;
+        private string serviceProblem = string.Empty;
+        private int serviceCost = 0;
+        private string serviceTag = string.Empty;
 
         public Drone() { }
 
@@ -32,7 +42,7 @@ namespace DroneServiceApplication
         }
         public void SetClientName(string _value)
         {
-            clientName = _value;
+            clientName = myTI.ToTitleCase(_value);
         }
         public string GetDroneModel()
         {
@@ -48,7 +58,7 @@ namespace DroneServiceApplication
         }
         public void SetServiceProblem(string _value)
         {
-            serviceProblem = _value;
+            serviceProblem = myTI.ToTitleCase(_value);
         }
         public int GetServiceCost()
         {
@@ -65,6 +75,12 @@ namespace DroneServiceApplication
         public void SetServiceTag(string _value)
         {
             serviceTag = _value;
+        }
+
+        // FUNCTIONS
+        public string Display()
+        {
+            return "Client: " + clientName + ", Cost: " + serviceCost;
         }
     }
 }
