@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace DroneServiceApplication
 {
-    /*
-    6.1 Ceate a separate class file to hold the data items of the Drone. Use separate getter and setter methods, 
-        ensure the attributes are private and the accessor methods are public. Add a display method that returns a string for Client Name and Service Cost. 
-        Add suitable code to the Client Name and Service Problem accessor methods so the data is formatted as Title case or Sentence case. 
-        Save the class as “Drone.cs”.
-     */
+    /// <summary>
+    /// 6.1 Ceate a separate class file to hold the data items of the Drone. Use separate getter and setter methods, 
+    /// ensure the attributes are private and the accessor methods are public. Add a display method that returns a string for Client Name and Service Cost.
+    /// Add suitable code to the Client Name and Service Problem accessor methods so the data is formatted as Title case or Sentence case. 
+    /// Save the class as “Drone.cs”.
+    /// </summary>
 
     internal class Drone
     {
@@ -21,7 +22,7 @@ namespace DroneServiceApplication
         private string clientName = string.Empty;
         private string droneModel = string.Empty;
         private string serviceProblem = string.Empty;
-        private int serviceCost = 0;
+        private float serviceCost = 0;
         private string serviceTag = string.Empty;
 
         public Drone() { }
@@ -60,7 +61,7 @@ namespace DroneServiceApplication
         {
             serviceProblem = myTI.ToTitleCase(_value);
         }
-        public int GetServiceCost()
+        public float GetServiceCost()
         {
             return serviceCost;
         }

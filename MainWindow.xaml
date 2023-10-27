@@ -5,76 +5,78 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DroneServiceApplication"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="DroneServiceApplication.MainWindow"
+        xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800
+" Width="800">
     <Grid>
         <Label Content="Drone Service" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="48" FontWeight="Bold" Height="73" Width="332"/>
-        <TextBox x:Name="StatusMessage_TextBox" Margin="10,406,10,0" TextWrapping="Wrap" Text="Status Message..." UndoLimit="10" IsReadOnly="True" Height="18" VerticalAlignment="Top"/>
+        <TextBox x:Name="StatusMessage_TextBox" Margin="10,741,10,0" TextWrapping="Wrap" Text="Status Message..." UndoLimit="10" IsReadOnly="True" Height="18" VerticalAlignment="Top"/>
 
-        <TextBox x:Name="ClientName_TextBox" HorizontalAlignment="Left" Margin="10,78,0,0" TextWrapping="Wrap" Text="Client Name..." VerticalAlignment="Top" Width="306" UndoLimit="10" Height="21" Grid.Row="1"/>
-        <TextBox x:Name="DroneModel_TextBox" HorizontalAlignment="Left" Margin="10,104,0,0" TextWrapping="Wrap" Text="Drone Model..." VerticalAlignment="Top" Width="306" UndoLimit="10" Height="21" Grid.Row="1"/>
-        <TextBox x:Name="ServiceProblem_TextBox" HorizontalAlignment="Left" Margin="10,162,0,0" TextWrapping="Wrap" Text="Service Problem..." VerticalAlignment="Top" Width="306" UndoLimit="10" Height="50" Grid.Row="1"/>
-        <TextBox x:Name="ServiceCost_TextBox" HorizontalAlignment="Left" Margin="10,132,0,0" TextWrapping="Wrap" Text="Service Cost..." VerticalAlignment="Top" Width="153" UndoLimit="10" Height="25" Grid.Row="1"/>
-        <ComboBox HorizontalAlignment="Left" Margin="168,132,0,0" VerticalAlignment="Top" Width="148" Height="25" IsReadOnly="True" Text="Service Tag 1" SelectedIndex="0" Grid.Row="1">
-            <System:String>Service Tag 1</System:String>
-            <System:String>Service Tag 2</System:String>
-        </ComboBox>
-        <Button x:Name="Add_Button" Content="Add Service" HorizontalAlignment="Left" Margin="329,145,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="Clear_Button" Content="Clear Completed List" HorizontalAlignment="Left" Margin="329,182,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Label Content="Client Name" HorizontalAlignment="Left" Margin="11,78,0,0" VerticalAlignment="Top" Height="28" FontWeight="Bold"/>
+        <Label Content="Drone Model" HorizontalAlignment="Left" Margin="11,119,0,0" VerticalAlignment="Top" Height="28" FontWeight="Bold"/>
+        <Label Content="Service Cost" HorizontalAlignment="Left" Margin="11,156,0,0" VerticalAlignment="Top" Height="28" FontWeight="Bold"/>
+        <Label Content="Service Problem&#xD;&#xA;" HorizontalAlignment="Left" Margin="11,193,0,0" VerticalAlignment="Top" Height="28" FontWeight="Bold"/>
+        <Label Content="Service Tag" HorizontalAlignment="Left" Margin="372,156,0,0" VerticalAlignment="Top" Height="28" FontWeight="Bold"/>
 
-        <GroupBox Header="Normal" Margin="504,5,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="286" Height="182" VerticalAlignment="Top" Grid.Row="1">
+        <TextBox x:Name="ClientName_TextBox" HorizontalAlignment="Left" Margin="125,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" UndoLimit="10" Height="28"/>
+        <TextBox x:Name="DroneModel_TextBox" HorizontalAlignment="Left" Margin="125,119,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" UndoLimit="10" Height="28"/>
+        <TextBox x:Name="ServiceProblem_TextBox" HorizontalAlignment="Left" Margin="125,193,0,0" TextWrapping="Wrap" Width="550" UndoLimit="10" Height="64" VerticalAlignment="Top"/>
+        <TextBox x:Name="ServiceCost_TextBox" HorizontalAlignment="Left" Margin="125,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" UndoLimit="10" Height="28"/>
+        <Button x:Name="Add_Button" Content="Add Service" HorizontalAlignment="Left" Margin="126,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="Delete_Button" Content="Remove Service" HorizontalAlignment="Center" Margin="0,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="Clear_Button" Content="Clear Completed List" HorizontalAlignment="Left" Margin="523,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+
+        <GroupBox Header="Normal" Margin="10,313,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="385" Height="182" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Height="142">
-                <ListView x:Name="Normal_ListView" d:ItemsSource="{d:SampleData ItemCount=5}" Height="141" Width="178">
+                <ListView x:Name="Normal_ListView">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Client Name"/>
-                            <GridViewColumn Header="Drone Model"/>
-                            <GridViewColumn Header="Service Problem"/>
-                            <GridViewColumn Header="Service Cost"/>
-                            <GridViewColumn Header="Service Tag"/>
+                            <GridViewColumn Header="Client Name" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Drone Model" DisplayMemberBinding="{Binding Model}"/>
+                            <GridViewColumn Header="Service Problem" DisplayMemberBinding="{Binding Problem}"/>
+                            <GridViewColumn Header="Service Cost" DisplayMemberBinding="{Binding Cost}"/>
+                            <GridViewColumn Header="Service Tag" DisplayMemberBinding="{Binding Tag}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <StackPanel Orientation="Vertical" Height="139" Width="96">
-                    <Button x:Name="Remove_Button" Content="Finish" Height="28" Width="86"/>
-                </StackPanel>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Priority" Margin="504,219,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="286" Grid.Row="1">
+        <GroupBox Header="Priority" Margin="400,313,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="390">
             <StackPanel Orientation="Horizontal" Height="142">
-                <ListView x:Name="Priority_ListView" d:ItemsSource="{d:SampleData ItemCount=5}" Width="177">
+                <ListView x:Name="Priority_ListView">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Client Name"/>
-                            <GridViewColumn Header="Drone Model"/>
-                            <GridViewColumn Header="Service Problem"/>
-                            <GridViewColumn Header="Service Cost"/>
-                            <GridViewColumn Header="Service Tag"/>
+                            <GridViewColumn Header="Client Name" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Drone Model" DisplayMemberBinding="{Binding Model}"/>
+                            <GridViewColumn Header="Service Problem" DisplayMemberBinding="{Binding Problem}"/>
+                            <GridViewColumn Header="Service Cost" DisplayMemberBinding="{Binding Cost}"/>
+                            <GridViewColumn Header="Service Tag" DisplayMemberBinding="{Binding Tag}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <StackPanel Orientation="Vertical" Height="139" Width="96">
-                    <Button x:Name="Remove_Button1" Content="Finish"/>
-                </StackPanel>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Completed" Margin="10,219,0,0" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="490" Grid.Row="1">
-            <ListView x:Name="Completed_ListView" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,15,0" Height="140">
+        <GroupBox Header="Completed" Margin="10,510,0,0" Height="216" VerticalAlignment="Top" HorizontalAlignment="Left" Width="780">
+            <ListView x:Name="Completed_ListView" Margin="10,0,15,0" Height="176">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Client Name"/>
-                        <GridViewColumn Header="Drone Model"/>
-                        <GridViewColumn Header="Service Problem"/>
-                        <GridViewColumn Header="Service Cost"/>
-                        <GridViewColumn Header="Service Tag"/>
+                        <GridViewColumn Header="Client Name" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="Drone Model" DisplayMemberBinding="{Binding Model}"/>
+                        <GridViewColumn Header="Service Problem" DisplayMemberBinding="{Binding Problem}"/>
+                        <GridViewColumn Header="Service Cost" DisplayMemberBinding="{Binding Cost}"/>
+                        <GridViewColumn Header="Service Tag" DisplayMemberBinding="{Binding Tag}"/>
                     </GridView>
                 </ListView.View>
             </ListView>
         </GroupBox>
-        <StackPanel x:Name="Radios_Stack" Orientation="Horizontal" Margin="329,84,0,0" HorizontalAlignment="Left" Width="160" Height="30" VerticalAlignment="Top">
-            <RadioButton Content="Normal" Width="70"/>
-            <RadioButton Content="Priority" Width="68"/>
+        <StackPanel x:Name="Radios_Stack" Orientation="Horizontal" Margin="618,84,0,0" HorizontalAlignment="Left" Width="160" Height="30" VerticalAlignment="Top">
+            <RadioButton x:Name="Radio_Normal" Content="Normal" Width="70"/>
+            <RadioButton x:Name="Radio_Priority" Content="Priority" Width="68"/>
         </StackPanel>
+
+        <wpfx:IntegerUpDown x:Name="ServiceTag_UpDown" Height="30" Margin="451,156,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="224"/>
+
 
 
     </Grid>
