@@ -28,9 +28,13 @@ namespace DroneServiceApplication
             InitializeComponent();
             Add_Button.Click += Add_Button_Click;
             Clear_Button.Click += Clear_Button_Click;
+            ServiceTag_UpDown.ValueChanged += IncrementServiceTagControl;
             ServiceCost_TextBox.PreviewTextInput += EnsureServiceCostIsNumeric;
-            Normal_ListView.SelectionChanged += ClickRegularService;
+            Normal_ListView.SelectionChanged += DisplayRegularServicesIntoTextBoxes;
+            Priority_ListView.SelectionChanged += DisplayExpressServicesIntoTextBoxes;
             Completed_ListView.PreviewMouseDoubleClick += DoubleClickFinishedListItem;
+            FinishRegular_Button.Click += FinishRegularService;
+            FinishExpress_Button.Click += FinishExpressService;
         }
 
         private void Add_Button_Click(object sender, RoutedEventArgs e)
@@ -66,16 +70,22 @@ namespace DroneServiceApplication
         public void AddNewItem()
         {
             // TODO
-            Drone drone = new Drone(ClientName_TextBox.Text, DroneModel_TextBox.Text, ServiceProblem_TextBox.Text, 100, "Tag");
-            Clear();
-            switch (GetServicePriority())
+            if(CheckIfTextboxesAreInvalid())
             {
-                case 0:
+                return;
+            }
+
+            int priority = GetServicePriority();
+            Drone drone = new Drone(ClientName_TextBox.Text, DroneModel_TextBox.Text, ServiceProblem_TextBox.Text, CalculatePricing(100, priority), ServiceTag_TextBox.Text);
+            Clear();
+            switch (priority)
+            {
+                case 0: // Normal
                     RegularService.Enqueue(drone);
                     DisplayRegularService();
                     SetStatusMessage("Added new entry to Regular Service");
                     break;
-                case 1:
+                case 1: // Express
                     ExpressService.Enqueue(drone);
                     DisplayExpressService();
                     SetStatusMessage("Added new entry to Express Service");
@@ -84,9 +94,6 @@ namespace DroneServiceApplication
                     break;
             }
             
-            
-            
-            // IncrementServiceTagControl();
         }
 
         /// <summary>
@@ -94,9 +101,19 @@ namespace DroneServiceApplication
         /// </summary>
         /// <param name="_value"></param>
         /// <returns></returns>
-        public float AddPriorityPricing(float _value)
+        public float CalculatePricing(float _value, int _priority)
         {
-            return _value * 1.15f;
+            switch (_priority)
+            {
+                case 0: // Normal
+                    break;
+                case 1: // Express
+                    _value = _value * 1.15f;
+                    break;
+                default:
+                    break;
+            }
+            return _value;
         }
 
         /// <summary>
@@ -106,11 +123,11 @@ namespace DroneServiceApplication
         /// <returns></returns>
         public int GetServicePriority()
         {
-            if (Radio_Normal.IsChecked.GetValueOrDefault(false))
+            if (Radio_Regular.IsChecked.GetValueOrDefault(false))
             {
                 return 0;
             }
-            if (Radio_Priority.IsChecked.GetValueOrDefault(false))
+            if (Radio_Express.IsChecked.GetValueOrDefault(false))
             {
                 return 1;
             }
@@ -123,7 +140,6 @@ namespace DroneServiceApplication
         /// </summary>
         public void DisplayRegularService()
         {
-            // TODO
             Normal_ListView.Items.Clear();
             foreach (var item in RegularService)
             {
@@ -144,7 +160,6 @@ namespace DroneServiceApplication
         /// </summary>
         public void DisplayExpressService()
         {
-            // TODO
             Priority_ListView.Items.Clear();
             foreach (var item in ExpressService)
             {
@@ -180,28 +195,66 @@ namespace DroneServiceApplication
         /// this method must be called inside the “AddNewItem” method before the new service item is added to a queue.
         /// </summary>
         /// <param name="_value"></param>
-        public void IncrementServiceTagControl(int _value)
+        public void IncrementServiceTagControl(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            IntegerUpDown updown = (IntegerUpDown)sender;
+            int newVal = (int)e.NewValue;
+            int maxVal = 4;
+            if(newVal < 0) { updown.Value = maxVal; }
+            if(newVal > maxVal) { updown.Value = 0; }
 
+            switch (newVal)
+            {
+                case 0:
+                    ServiceTag_TextBox.Text = "Tag 1";
+                    break;
+                case 1:
+                    ServiceTag_TextBox.Text = "Tag 2";
+                    break;
+                case 2:
+                    ServiceTag_TextBox.Text = "Tag 3";
+                    break;
+                case 3:
+                    ServiceTag_TextBox.Text = "Tag 4";
+                    break;
+                case 4:
+                    ServiceTag_TextBox.Text = "Tag 5";
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
         /// 6.12 Create a mouse click method for the regular service ListView that will display the Client Name and Service Problem in the related textboxes.
         /// </summary>
-        public void ClickRegularService(object sender, SelectionChangedEventArgs e)
+        public void DisplayRegularServicesIntoTextBoxes(object sender, SelectionChangedEventArgs e)
         {
             if(e.AddedItems.Count > 0)
             {
-                //ClientName_TextBox.Text = e.AddedItems[0].ToString();
+                string[] values = OutputDroneData(e.AddedItems[0].ToString());
+                ClientName_TextBox.Text = values[0];
+                DroneModel_TextBox.Text = values[1];
+                ServiceProblem_TextBox.Text = values[2];
+                ServiceCost_TextBox.Text = values[3];
+                ServiceTag_TextBox.Text = values[4];
             }
         }
 
         /// <summary>
         /// 6.13 Create a mouse click method for the express service ListView that will display the Client Name and Service Problem in the related textboxes.
         /// </summary>
-        public void ClickExpressService(object sender, MouseButtonEventArgs e)
+        public void DisplayExpressServicesIntoTextBoxes(object sender, SelectionChangedEventArgs e)
         {
-
+            if (e.AddedItems.Count > 0)
+            {
+                string[] values = OutputDroneData(e.AddedItems[0].ToString());
+                ClientName_TextBox.Text = values[0];
+                DroneModel_TextBox.Text = values[1];
+                ServiceProblem_TextBox.Text = values[2];
+                ServiceCost_TextBox.Text = values[3];
+                ServiceTag_TextBox.Text = values[4];
+            }
         }
 
         /// <summary>
@@ -210,9 +263,26 @@ namespace DroneServiceApplication
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void ClickRegularServiceRemove(object sender, MouseButtonEventArgs e)
+        public void FinishRegularService(object sender, RoutedEventArgs e)
         {
+            Drone drone = RegularService.Dequeue();
+            FinishedList.Add(drone);
 
+            Completed_ListView.Items.Clear();
+            foreach (var item in FinishedList)
+            {
+                Completed_ListView.Items.Add(new
+                {
+                    Name = item.GetClientName(),
+                    Model = item.GetDroneModel(),
+                    Problem = item.GetServiceProblem(),
+                    Cost = item.GetServiceCost(),
+                    Tag = item.GetServiceTag()
+                });
+            }
+
+            DisplayRegularService();
+            Clear();
         }
 
         /// <summary>
@@ -221,9 +291,26 @@ namespace DroneServiceApplication
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void ClickExpressServiceRemove(object sender, MouseButtonEventArgs e)
+        public void FinishExpressService(object sender, RoutedEventArgs e)
         {
+            Drone drone = ExpressService.Dequeue();
+            FinishedList.Add(drone);
 
+            Completed_ListView.Items.Clear();
+            foreach (var item in FinishedList)
+            {
+                Completed_ListView.Items.Add(new
+                {
+                    Name = item.GetClientName(),
+                    Model = item.GetDroneModel(),
+                    Problem = item.GetServiceProblem(),
+                    Cost = item.GetServiceCost(),
+                    Tag = item.GetServiceTag()
+                });
+            }
+
+            DisplayExpressService();
+            Clear();
         }
 
         /// <summary>
@@ -245,13 +332,13 @@ namespace DroneServiceApplication
             DroneModel_TextBox.Text = string.Empty;
             ServiceProblem_TextBox.Text = string.Empty;
             ServiceCost_TextBox.Text = string.Empty;
-            //ServiceTag_Dropdown.Text = string.Empty;
+            ServiceTag_TextBox.Text = string.Empty;
         }
 
         // 6.18 All code is required to be adequately commented. Map the programming criteria and features to your code/methods by adding comments above the method signatures.
         // Ensure your code is compliant with the CITEMS coding standards (refer http://www.citems.com.au/).
 
-        public void SetStatusMessage(string _msg, bool _showWindow = false, string _windowTitle = "Message")
+        private void SetStatusMessage(string _msg, bool _showWindow = false, string _windowTitle = "Message")
         {
             StatusMessage_TextBox.Text = _msg;
             if(_showWindow)
@@ -260,6 +347,68 @@ namespace DroneServiceApplication
                 win.Title = _windowTitle;
                 win.Show();
             }
+        }
+        private bool CheckIfTextboxesAreInvalid()
+        {
+            int invalidInputs = 0;
+            string msg = string.Empty;
+
+            if(GetServicePriority() < 0)
+            {
+                msg += "Please select priority level." + Environment.NewLine;
+                invalidInputs++;
+            }
+            if(string.IsNullOrEmpty(ClientName_TextBox.Text))
+            {
+                msg += "Please input Client Name." + Environment.NewLine;
+                invalidInputs++;
+            }
+            if (string.IsNullOrEmpty(DroneModel_TextBox.Text))
+            {
+                msg += "Please input Drone Model." + Environment.NewLine;
+                invalidInputs++;
+            }
+            if (string.IsNullOrEmpty(ServiceProblem_TextBox.Text))
+            {
+                msg += "Please input Service Problem." + Environment.NewLine;
+                invalidInputs++;
+            }
+            if (string.IsNullOrEmpty(ServiceCost_TextBox.Text))
+            {
+                msg += "Please input Service Cost." + Environment.NewLine;
+                invalidInputs++;
+            }
+            if (string.IsNullOrEmpty(ServiceTag_TextBox.Text))
+            {
+                msg += "Please input Service Tag." + Environment.NewLine;
+                invalidInputs++;
+            }
+
+            if(invalidInputs > 0)
+            {
+                System.Windows.MessageBox.Show(msg);
+                return true;
+            }
+            else
+            {
+
+                return false;
+            }
+        }
+
+        private string[] OutputDroneData(string _value)
+        {
+            // { Name = scac, Model = ascasc, Problem = fasc, Cost = 100, Tag = Tag 1 }
+
+            string[] values = _value.Split(",");
+            values[0] = values[0].Replace("{ Name = ", "");
+            values[1] = values[1].Replace(" Model = ", "");
+            values[2] = values[2].Replace(" Problem = ", "");
+            values[3] = values[3].Replace(" Cost = ", "");
+            values[4] = values[4].Replace(" Tag = ", "");
+            values[4] = values[4].Replace(" }", "");
+
+            return values;
         }
     }
 }

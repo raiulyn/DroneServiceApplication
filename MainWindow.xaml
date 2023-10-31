@@ -24,9 +24,11 @@
         <TextBox x:Name="ServiceProblem_TextBox" HorizontalAlignment="Left" Margin="125,193,0,0" TextWrapping="Wrap" Width="550" UndoLimit="10" Height="64" VerticalAlignment="Top"/>
         <TextBox x:Name="ServiceCost_TextBox" HorizontalAlignment="Left" Margin="125,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" UndoLimit="10" Height="28"/>
         <Button x:Name="Add_Button" Content="Add Service" HorizontalAlignment="Left" Margin="126,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="Delete_Button" Content="Remove Service" HorizontalAlignment="Center" Margin="0,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="Delete_Button" Content="Remove Service" HorizontalAlignment="Left" Margin="324,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
         <Button x:Name="Clear_Button" Content="Clear Completed List" HorizontalAlignment="Left" Margin="523,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-
+        <Button x:Name="FinishRegular_Button" Content="Finish Regular Service" HorizontalAlignment="Left" Margin="126,510,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="FinishExpress_Button" Content="Finish Express Service" HorizontalAlignment="Left" Margin="523,510,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        
         <GroupBox Header="Normal" Margin="10,313,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="385" Height="182" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Height="142">
                 <ListView x:Name="Normal_ListView">
@@ -57,7 +59,7 @@
                 </ListView>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Completed" Margin="10,510,0,0" Height="216" VerticalAlignment="Top" HorizontalAlignment="Left" Width="780">
+        <GroupBox Header="Completed" Margin="0,540,0,0" Height="186" VerticalAlignment="Top" HorizontalAlignment="Center" Width="780">
             <ListView x:Name="Completed_ListView" Margin="10,0,15,0" Height="176">
                 <ListView.View>
                     <GridView>
@@ -71,11 +73,14 @@
             </ListView>
         </GroupBox>
         <StackPanel x:Name="Radios_Stack" Orientation="Horizontal" Margin="618,84,0,0" HorizontalAlignment="Left" Width="160" Height="30" VerticalAlignment="Top">
-            <RadioButton x:Name="Radio_Normal" Content="Normal" Width="70"/>
-            <RadioButton x:Name="Radio_Priority" Content="Priority" Width="68"/>
+            <RadioButton x:Name="Radio_Regular" Content="Regular" Width="70"/>
+            <RadioButton x:Name="Radio_Express" Content="Express" Width="68"/>
         </StackPanel>
 
-        <wpfx:IntegerUpDown x:Name="ServiceTag_UpDown" Height="30" Margin="451,156,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="224"/>
+        <wpfx:IntegerUpDown x:Name="ServiceTag_UpDown" Height="30" Margin="656,156,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="19" AllowTextInput="False"/>
+        <TextBox x:Name="ServiceTag_TextBox" HorizontalAlignment="Left" Margin="451,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" UndoLimit="10" Height="28" IsReadOnly="True"/>
+        
+
 
 
 

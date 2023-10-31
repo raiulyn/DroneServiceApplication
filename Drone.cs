@@ -27,7 +27,7 @@ namespace DroneServiceApplication
 
         public Drone() { }
 
-        public Drone(string _clientName, string _droneModel, string _serviceProblem, int _serviceCost, string _serviceTag)
+        public Drone(string _clientName, string _droneModel, string _serviceProblem, float _serviceCost, string _serviceTag)
         {
             clientName = _clientName;
             droneModel = _droneModel;
