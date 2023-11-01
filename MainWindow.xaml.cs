@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -30,9 +33,9 @@ namespace DroneServiceApplication
             Clear_Button.Click += Clear_Button_Click;
             ServiceTag_UpDown.ValueChanged += IncrementServiceTagControl;
             ServiceCost_TextBox.PreviewTextInput += EnsureServiceCostIsNumeric;
-            Normal_ListView.SelectionChanged += DisplayRegularServicesIntoTextBoxes;
-            Priority_ListView.SelectionChanged += DisplayExpressServicesIntoTextBoxes;
-            Completed_ListView.PreviewMouseDoubleClick += DoubleClickFinishedListItem;
+            Regular_ListView.SelectionChanged += DisplayRegularServicesIntoTextBoxes;
+            Express_ListView.SelectionChanged += DisplayExpressServicesIntoTextBoxes;
+            Completed_ListView.MouseDoubleClick += DoubleClickFinishedListItem;
             FinishRegular_Button.Click += FinishRegularService;
             FinishExpress_Button.Click += FinishExpressService;
         }
@@ -69,14 +72,14 @@ namespace DroneServiceApplication
         /// </summary>
         public void AddNewItem()
         {
-            // TODO
             if(CheckIfTextboxesAreInvalid())
             {
                 return;
             }
 
             int priority = GetServicePriority();
-            Drone drone = new Drone(ClientName_TextBox.Text, DroneModel_TextBox.Text, ServiceProblem_TextBox.Text, CalculatePricing(100, priority), ServiceTag_TextBox.Text);
+            float cost = float.Parse(ServiceCost_TextBox.Text);
+            Drone drone = new Drone(ClientName_TextBox.Text, DroneModel_TextBox.Text, ServiceProblem_TextBox.Text, CalculatePricing(cost, priority), ServiceTag_TextBox.Text);
             Clear();
             switch (priority)
             {
@@ -113,7 +116,7 @@ namespace DroneServiceApplication
                 default:
                     break;
             }
-            return _value;
+            return MathF.Round(_value, 2, MidpointRounding.ToZero);
         }
 
         /// <summary>
@@ -140,10 +143,10 @@ namespace DroneServiceApplication
         /// </summary>
         public void DisplayRegularService()
         {
-            Normal_ListView.Items.Clear();
+            Regular_ListView.Items.Clear();
             foreach (var item in RegularService)
             {
-                Normal_ListView.Items.Add(new
+                Regular_ListView.Items.Add(new
                 {
                     Name = item.GetClientName(),
                     Model = item.GetDroneModel(),
@@ -160,10 +163,10 @@ namespace DroneServiceApplication
         /// </summary>
         public void DisplayExpressService()
         {
-            Priority_ListView.Items.Clear();
+            Express_ListView.Items.Clear();
             foreach (var item in ExpressService)
             {
-                Priority_ListView.Items.Add(new
+                Express_ListView.Items.Add(new
                 {
                     Name = item.GetClientName(),
                     Model = item.GetDroneModel(),
@@ -184,9 +187,8 @@ namespace DroneServiceApplication
             var textBox = sender as TextBox;
             if (textBox != null)
             {
-                var fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
-                double val;
-                e.Handled = !double.TryParse(fullText, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out val);
+                var regex = new Regex(@"^[0-9]*(?:\.[0-9]*)?$");
+                e.Handled = !regex.IsMatch(e.Text);
             }
         }
 
@@ -265,22 +267,15 @@ namespace DroneServiceApplication
         /// <param name="e"></param>
         public void FinishRegularService(object sender, RoutedEventArgs e)
         {
+            if(RegularService.Count <= 0)
+            {
+                SetStatusMessage("No available Regular Services", true);
+                return;
+            }
             Drone drone = RegularService.Dequeue();
             FinishedList.Add(drone);
 
-            Completed_ListView.Items.Clear();
-            foreach (var item in FinishedList)
-            {
-                Completed_ListView.Items.Add(new
-                {
-                    Name = item.GetClientName(),
-                    Model = item.GetDroneModel(),
-                    Problem = item.GetServiceProblem(),
-                    Cost = item.GetServiceCost(),
-                    Tag = item.GetServiceTag()
-                });
-            }
-
+            DisplayFinishedServices();
             DisplayRegularService();
             Clear();
         }
@@ -293,22 +288,15 @@ namespace DroneServiceApplication
         /// <param name="e"></param>
         public void FinishExpressService(object sender, RoutedEventArgs e)
         {
+            if (ExpressService.Count <= 0)
+            {
+                SetStatusMessage("No available Express Services", true);
+                return;
+            }
             Drone drone = ExpressService.Dequeue();
             FinishedList.Add(drone);
 
-            Completed_ListView.Items.Clear();
-            foreach (var item in FinishedList)
-            {
-                Completed_ListView.Items.Add(new
-                {
-                    Name = item.GetClientName(),
-                    Model = item.GetDroneModel(),
-                    Problem = item.GetServiceProblem(),
-                    Cost = item.GetServiceCost(),
-                    Tag = item.GetServiceTag()
-                });
-            }
-
+            DisplayFinishedServices();
             DisplayExpressService();
             Clear();
         }
@@ -320,7 +308,9 @@ namespace DroneServiceApplication
         /// <param name="e"></param>
         public void DoubleClickFinishedListItem(object sender, MouseButtonEventArgs e)
         {
-
+            ListView lv = (ListView)sender;
+            FinishedList.RemoveAt(lv.SelectedIndex);
+            DisplayFinishedServices();
         }
 
         /// <summary>
@@ -341,11 +331,9 @@ namespace DroneServiceApplication
         private void SetStatusMessage(string _msg, bool _showWindow = false, string _windowTitle = "Message")
         {
             StatusMessage_TextBox.Text = _msg;
-            if(_showWindow)
+            if (_showWindow)
             {
-                Window win = new Window();
-                win.Title = _windowTitle;
-                win.Show();
+                System.Windows.MessageBox.Show(_msg, _windowTitle);
             }
         }
         private bool CheckIfTextboxesAreInvalid()
@@ -386,7 +374,7 @@ namespace DroneServiceApplication
 
             if(invalidInputs > 0)
             {
-                System.Windows.MessageBox.Show(msg);
+                System.Windows.MessageBox.Show(msg, "Message");
                 return true;
             }
             else
@@ -395,7 +383,6 @@ namespace DroneServiceApplication
                 return false;
             }
         }
-
         private string[] OutputDroneData(string _value)
         {
             // { Name = scac, Model = ascasc, Problem = fasc, Cost = 100, Tag = Tag 1 }
@@ -409,6 +396,21 @@ namespace DroneServiceApplication
             values[4] = values[4].Replace(" }", "");
 
             return values;
+        }
+        private void DisplayFinishedServices()
+        {
+            Completed_ListView.Items.Clear();
+            foreach (var item in FinishedList)
+            {
+                Completed_ListView.Items.Add(new
+                {
+                    Name = item.GetClientName(),
+                    Model = item.GetDroneModel(),
+                    Problem = item.GetServiceProblem(),
+                    Cost = item.GetServiceCost(),
+                    Tag = item.GetServiceTag()
+                });
+            }
         }
     }
 }

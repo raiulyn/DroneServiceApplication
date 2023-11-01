@@ -9,9 +9,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800
 " Width="800">
-    <Grid>
+    <Grid Margin="0,0,0,0">
         <Label Content="Drone Service" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="48" FontWeight="Bold" Height="73" Width="332"/>
-        <TextBox x:Name="StatusMessage_TextBox" Margin="10,741,10,0" TextWrapping="Wrap" Text="Status Message..." UndoLimit="10" IsReadOnly="True" Height="18" VerticalAlignment="Top"/>
+        <TextBox x:Name="StatusMessage_TextBox" Margin="10,717,10,0" TextWrapping="Wrap" Text="Status Message..." UndoLimit="10" IsReadOnly="True" Height="18" VerticalAlignment="Top"/>
 
         <Label Content="Client Name" HorizontalAlignment="Left" Margin="11,78,0,0" VerticalAlignment="Top" Height="28" FontWeight="Bold"/>
         <Label Content="Drone Model" HorizontalAlignment="Left" Margin="11,119,0,0" VerticalAlignment="Top" Height="28" FontWeight="Bold"/>
@@ -23,15 +23,14 @@
         <TextBox x:Name="DroneModel_TextBox" HorizontalAlignment="Left" Margin="125,119,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" UndoLimit="10" Height="28"/>
         <TextBox x:Name="ServiceProblem_TextBox" HorizontalAlignment="Left" Margin="125,193,0,0" TextWrapping="Wrap" Width="550" UndoLimit="10" Height="64" VerticalAlignment="Top"/>
         <TextBox x:Name="ServiceCost_TextBox" HorizontalAlignment="Left" Margin="125,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" UndoLimit="10" Height="28"/>
-        <Button x:Name="Add_Button" Content="Add Service" HorizontalAlignment="Left" Margin="126,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="Delete_Button" Content="Remove Service" HorizontalAlignment="Left" Margin="324,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="Clear_Button" Content="Clear Completed List" HorizontalAlignment="Left" Margin="523,273,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="FinishRegular_Button" Content="Finish Regular Service" HorizontalAlignment="Left" Margin="126,510,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="FinishExpress_Button" Content="Finish Express Service" HorizontalAlignment="Left" Margin="523,510,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        
-        <GroupBox Header="Normal" Margin="10,313,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="385" Height="182" VerticalAlignment="Top">
+        <Button x:Name="Add_Button" Content="Add Service" HorizontalAlignment="Left" Margin="234,262,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="Clear_Button" Content="Clear" HorizontalAlignment="Left" Margin="408,262,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="FinishRegular_Button" Content="Finish Regular Service" HorizontalAlignment="Left" Margin="122,484,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="FinishExpress_Button" Content="Finish Express Service" HorizontalAlignment="Left" Margin="519,484,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+
+        <GroupBox Header="Regular" Margin="10,297,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="385" Height="182" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Height="142">
-                <ListView x:Name="Normal_ListView">
+                <ListView x:Name="Regular_ListView">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Client Name" DisplayMemberBinding="{Binding Name}"/>
@@ -44,9 +43,9 @@
                 </ListView>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Priority" Margin="400,313,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="390">
+        <GroupBox Header="Express" Margin="400,297,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="390">
             <StackPanel Orientation="Horizontal" Height="142">
-                <ListView x:Name="Priority_ListView">
+                <ListView x:Name="Express_ListView">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Client Name" DisplayMemberBinding="{Binding Name}"/>
@@ -59,8 +58,8 @@
                 </ListView>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Completed" Margin="0,540,0,0" Height="186" VerticalAlignment="Top" HorizontalAlignment="Center" Width="780">
-            <ListView x:Name="Completed_ListView" Margin="10,0,15,0" Height="176">
+        <GroupBox Header="Completed" Margin="0,519,0,0" Height="193" VerticalAlignment="Top" HorizontalAlignment="Center" Width="780">
+            <ListView x:Name="Completed_ListView" Margin="10,0,15,0">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Client Name" DisplayMemberBinding="{Binding Name}"/>
@@ -79,8 +78,6 @@
 
         <wpfx:IntegerUpDown x:Name="ServiceTag_UpDown" Height="30" Margin="656,156,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="19" AllowTextInput="False"/>
         <TextBox x:Name="ServiceTag_TextBox" HorizontalAlignment="Left" Margin="451,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" UndoLimit="10" Height="28" IsReadOnly="True"/>
-        
-
 
 
 
