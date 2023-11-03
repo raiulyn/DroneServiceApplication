@@ -28,7 +28,7 @@
         <Button x:Name="FinishRegular_Button" Content="Finish Regular Service" HorizontalAlignment="Left" Margin="122,484,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
         <Button x:Name="FinishExpress_Button" Content="Finish Express Service" HorizontalAlignment="Left" Margin="519,484,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
 
-        <GroupBox Header="Regular" Margin="10,297,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="385" Height="182" VerticalAlignment="Top">
+        <GroupBox Header="Regular" Margin="10,297,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="385" Height="182" VerticalAlignment="Top" Background="#FF59E8E4">
             <StackPanel Orientation="Horizontal" Height="142">
                 <ListView x:Name="Regular_ListView">
                     <ListView.View>
@@ -43,7 +43,7 @@
                 </ListView>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Express" Margin="400,297,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="390">
+        <GroupBox Header="Express" Margin="400,297,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="390" Background="#FF59E8E4">
             <StackPanel Orientation="Horizontal" Height="142">
                 <ListView x:Name="Express_ListView">
                     <ListView.View>
@@ -58,7 +58,7 @@
                 </ListView>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Completed" Margin="0,519,0,0" Height="193" VerticalAlignment="Top" HorizontalAlignment="Center" Width="780">
+        <GroupBox Header="Completed" Margin="10,519,0,0" Height="193" VerticalAlignment="Top" HorizontalAlignment="Left" Width="780">
             <ListView x:Name="Completed_ListView" Margin="10,0,15,0">
                 <ListView.View>
                     <GridView>

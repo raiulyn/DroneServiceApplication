@@ -26,18 +26,32 @@ namespace DroneServiceApplication
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         public MainWindow()
         {
             InitializeComponent();
             Add_Button.Click += Add_Button_Click;
             Clear_Button.Click += Clear_Button_Click;
+            ClientName_TextBox.PreviewGotKeyboardFocus += Focus_Text;
+            ClientName_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
+            DroneModel_TextBox.PreviewGotKeyboardFocus += Focus_Text;
+            DroneModel_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
+            ServiceCost_TextBox.PreviewGotKeyboardFocus += Focus_Text;
+            ServiceCost_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
+            ServiceTag_TextBox.PreviewGotKeyboardFocus += Focus_Text;
+            ServiceTag_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
+            ServiceProblem_TextBox.PreviewGotKeyboardFocus += Focus_Text;
+            ServiceProblem_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
             ServiceTag_UpDown.ValueChanged += IncrementServiceTagControl;
             ServiceCost_TextBox.PreviewTextInput += EnsureServiceCostIsNumeric;
             Regular_ListView.SelectionChanged += DisplayRegularServicesIntoTextBoxes;
+            Regular_ListView.LostFocus += ListView_UnSelect;
             Express_ListView.SelectionChanged += DisplayExpressServicesIntoTextBoxes;
+            Express_ListView.LostFocus += ListView_UnSelect;
             Completed_ListView.MouseDoubleClick += DoubleClickFinishedListItem;
             FinishRegular_Button.Click += FinishRegularService;
             FinishExpress_Button.Click += FinishExpressService;
+            PrefillHints();
         }
 
         private void Add_Button_Click(object sender, RoutedEventArgs e)
@@ -48,7 +62,28 @@ namespace DroneServiceApplication
         {
             Clear();
         }
-
+        private void Focus_Text(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            textBox.Foreground = Brushes.Black;
+            if (textBox.Text == GetHintTexts(textBox))
+            {
+                textBox.Text = string.Empty;
+            }
+        }
+        private void Unfocus_Text(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            if (textBox.Text == string.Empty)
+            {
+                ShowHintTexts(textBox);
+            }
+        }
+        private void ListView_UnSelect(object sender, RoutedEventArgs e)
+        {
+            ListView view = (ListView)sender;
+            view.UnselectAll();
+        }
 
         /// <summary>
         /// 6.2 Create a global List<T> of type Drone called “FinishedList”. 
@@ -72,7 +107,7 @@ namespace DroneServiceApplication
         /// </summary>
         public void AddNewItem()
         {
-            if(CheckIfTextboxesAreInvalid())
+            if (CheckIfTextboxesAreInvalid())
             {
                 return;
             }
@@ -96,7 +131,7 @@ namespace DroneServiceApplication
                 default:
                     break;
             }
-            
+            PrefillHints();
         }
 
         /// <summary>
@@ -202,8 +237,8 @@ namespace DroneServiceApplication
             IntegerUpDown updown = (IntegerUpDown)sender;
             int newVal = (int)e.NewValue;
             int maxVal = 4;
-            if(newVal < 0) { updown.Value = maxVal; }
-            if(newVal > maxVal) { updown.Value = 0; }
+            if (newVal < 0) { updown.Value = maxVal; }
+            if (newVal > maxVal) { updown.Value = 0; }
 
             switch (newVal)
             {
@@ -225,6 +260,7 @@ namespace DroneServiceApplication
                 default:
                     break;
             }
+            ServiceTag_TextBox.Foreground = Brushes.Black;
         }
 
         /// <summary>
@@ -232,14 +268,23 @@ namespace DroneServiceApplication
         /// </summary>
         public void DisplayRegularServicesIntoTextBoxes(object sender, SelectionChangedEventArgs e)
         {
-            if(e.AddedItems.Count > 0)
+            if (Regular_ListView.SelectedIndex > -1)
             {
-                string[] values = OutputDroneData(e.AddedItems[0].ToString());
-                ClientName_TextBox.Text = values[0];
-                DroneModel_TextBox.Text = values[1];
-                ServiceProblem_TextBox.Text = values[2];
-                ServiceCost_TextBox.Text = values[3];
-                ServiceTag_TextBox.Text = values[4];
+                Drone drone = RegularService.ElementAt(Regular_ListView.SelectedIndex);
+                ClientName_TextBox.Text = drone.GetClientName();
+                ClientName_TextBox.Foreground = Brushes.Black;
+                DroneModel_TextBox.Text = drone.GetDroneModel();
+                DroneModel_TextBox.Foreground = Brushes.Black;
+                ServiceProblem_TextBox.Text = drone.GetServiceProblem();
+                ServiceProblem_TextBox.Foreground = Brushes.Black;
+                ServiceCost_TextBox.Text = drone.GetServiceCost().ToString();
+                ServiceCost_TextBox.Foreground = Brushes.Black;
+                ServiceTag_TextBox.Text = drone.GetServiceTag();
+                ServiceTag_TextBox.Foreground = Brushes.Black;
+            }
+            else
+            {
+                Regular_ListView.UnselectAll();
             }
         }
 
@@ -248,14 +293,23 @@ namespace DroneServiceApplication
         /// </summary>
         public void DisplayExpressServicesIntoTextBoxes(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0)
+            if (Express_ListView.SelectedIndex > -1)
             {
-                string[] values = OutputDroneData(e.AddedItems[0].ToString());
-                ClientName_TextBox.Text = values[0];
-                DroneModel_TextBox.Text = values[1];
-                ServiceProblem_TextBox.Text = values[2];
-                ServiceCost_TextBox.Text = values[3];
-                ServiceTag_TextBox.Text = values[4];
+                Drone drone = ExpressService.ElementAt(Express_ListView.SelectedIndex);
+                ClientName_TextBox.Text = drone.GetClientName();
+                ClientName_TextBox.Foreground = Brushes.Black;
+                DroneModel_TextBox.Text = drone.GetDroneModel();
+                DroneModel_TextBox.Foreground = Brushes.Black;
+                ServiceProblem_TextBox.Text = drone.GetServiceProblem();
+                ServiceProblem_TextBox.Foreground = Brushes.Black;
+                ServiceCost_TextBox.Text = drone.GetServiceCost().ToString();
+                ServiceCost_TextBox.Foreground = Brushes.Black;
+                ServiceTag_TextBox.Text = drone.GetServiceTag();
+                ServiceTag_TextBox.Foreground = Brushes.Black;
+            }
+            else
+            {
+                Regular_ListView.UnselectAll();
             }
         }
 
@@ -267,7 +321,7 @@ namespace DroneServiceApplication
         /// <param name="e"></param>
         public void FinishRegularService(object sender, RoutedEventArgs e)
         {
-            if(RegularService.Count <= 0)
+            if (RegularService.Count <= 0)
             {
                 SetStatusMessage("No available Regular Services", true);
                 return;
@@ -323,6 +377,7 @@ namespace DroneServiceApplication
             ServiceProblem_TextBox.Text = string.Empty;
             ServiceCost_TextBox.Text = string.Empty;
             ServiceTag_TextBox.Text = string.Empty;
+            PrefillHints();
         }
 
         // 6.18 All code is required to be adequately commented. Map the programming criteria and features to your code/methods by adding comments above the method signatures.
@@ -341,38 +396,38 @@ namespace DroneServiceApplication
             int invalidInputs = 0;
             string msg = string.Empty;
 
-            if(GetServicePriority() < 0)
+            if (GetServicePriority() < 0)
             {
                 msg += "Please select priority level." + Environment.NewLine;
                 invalidInputs++;
             }
-            if(string.IsNullOrEmpty(ClientName_TextBox.Text))
+            if (string.IsNullOrEmpty(ClientName_TextBox.Text) || ClientName_TextBox.Text == GetHintTexts(ClientName_TextBox))
             {
                 msg += "Please input Client Name." + Environment.NewLine;
                 invalidInputs++;
             }
-            if (string.IsNullOrEmpty(DroneModel_TextBox.Text))
+            if (string.IsNullOrEmpty(DroneModel_TextBox.Text) || DroneModel_TextBox.Text == GetHintTexts(DroneModel_TextBox))
             {
                 msg += "Please input Drone Model." + Environment.NewLine;
                 invalidInputs++;
             }
-            if (string.IsNullOrEmpty(ServiceProblem_TextBox.Text))
+            if (string.IsNullOrEmpty(ServiceProblem_TextBox.Text) || ServiceProblem_TextBox.Text == GetHintTexts(ServiceProblem_TextBox))
             {
                 msg += "Please input Service Problem." + Environment.NewLine;
                 invalidInputs++;
             }
-            if (string.IsNullOrEmpty(ServiceCost_TextBox.Text))
+            if (string.IsNullOrEmpty(ServiceCost_TextBox.Text) || ServiceCost_TextBox.Text == GetHintTexts(ServiceCost_TextBox))
             {
                 msg += "Please input Service Cost." + Environment.NewLine;
                 invalidInputs++;
             }
-            if (string.IsNullOrEmpty(ServiceTag_TextBox.Text))
+            if (string.IsNullOrEmpty(ServiceTag_TextBox.Text) || ServiceTag_TextBox.Text == GetHintTexts(ServiceTag_TextBox))
             {
                 msg += "Please input Service Tag." + Environment.NewLine;
                 invalidInputs++;
             }
 
-            if(invalidInputs > 0)
+            if (invalidInputs > 0)
             {
                 System.Windows.MessageBox.Show(msg, "Message");
                 return true;
@@ -382,20 +437,6 @@ namespace DroneServiceApplication
 
                 return false;
             }
-        }
-        private string[] OutputDroneData(string _value)
-        {
-            // { Name = scac, Model = ascasc, Problem = fasc, Cost = 100, Tag = Tag 1 }
-
-            string[] values = _value.Split(",");
-            values[0] = values[0].Replace("{ Name = ", "");
-            values[1] = values[1].Replace(" Model = ", "");
-            values[2] = values[2].Replace(" Problem = ", "");
-            values[3] = values[3].Replace(" Cost = ", "");
-            values[4] = values[4].Replace(" Tag = ", "");
-            values[4] = values[4].Replace(" }", "");
-
-            return values;
         }
         private void DisplayFinishedServices()
         {
@@ -412,5 +453,85 @@ namespace DroneServiceApplication
                 });
             }
         }
+
+        private string GetHintTexts(TextBox textbox)
+        {
+            switch (textbox.Name)
+            {
+                case "ClientName_TextBox":
+                    return "Enter Client Name...";
+                case "DroneModel_TextBox":
+                    return "Enter Drone Model...";
+                case "ServiceCost_TextBox":
+                    return "Enter Service Cost...";
+                case "ServiceTag_TextBox":
+                    return "Enter Service Tag...";
+                case "ServiceProblem_TextBox":
+                    return "Enter Service Problem...";
+                default:
+                    return "Error";
+            }
+        }
+        private void ShowHintTexts(TextBox textbox)
+        {
+            textbox.Foreground = Brushes.Gray;
+            switch (textbox.Name)
+            {
+                case "ClientName_TextBox":
+                    textbox.Text = "Enter Client Name...";
+                    break;
+                case "DroneModel_TextBox":
+                    textbox.Text = "Enter Drone Model...";
+                    break;
+                case "ServiceCost_TextBox":
+                    textbox.Text = "Enter Service Cost...";
+                    break;
+                case "ServiceTag_TextBox":
+                    textbox.Text = "Enter Service Tag...";
+                    break;
+                case "ServiceProblem_TextBox":
+                    textbox.Text = "Enter Service Problem...";
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void PrefillHints()
+        {
+            ClientName_TextBox.Text = "Enter Client Name...";
+            ClientName_TextBox.Foreground = Brushes.Gray;
+            DroneModel_TextBox.Text = "Enter Drone Model...";
+            DroneModel_TextBox.Foreground = Brushes.Gray;
+            ServiceCost_TextBox.Text = "Enter Service Cost...";
+            ServiceCost_TextBox.Foreground = Brushes.Gray;
+            ServiceTag_TextBox.Text = "Enter Service Tag...";
+            ServiceTag_TextBox.Foreground = Brushes.Gray;
+            ServiceProblem_TextBox.Text = "Enter Service Problem...";
+            ServiceProblem_TextBox.Foreground = Brushes.Gray;
+        }
+
+        private bool isPrefillingTestingData = false;
+        private void PrefillTestingData()
+        {
+            ClientName_TextBox.Text = "James";
+            DroneModel_TextBox.Text = "Model K";
+            ServiceCost_TextBox.Text = "220";
+            ServiceTag_TextBox.Text = "Tag 2";
+            ServiceProblem_TextBox.Text = "Drone ain't working. Needs full service!";
+
+            ClientName_TextBox.Text = "Ash";
+            DroneModel_TextBox.Text = "Model L";
+            ServiceCost_TextBox.Text = "150";
+            ServiceTag_TextBox.Text = "Tag 1";
+            ServiceProblem_TextBox.Text = "Drone misbehaving. Need parts inspection.";
+
+            ClientName_TextBox.Text = "Steve";
+            DroneModel_TextBox.Text = "Model P";
+            ServiceCost_TextBox.Text = "50.50";
+            ServiceTag_TextBox.Text = "Tag 4";
+            ServiceProblem_TextBox.Text = "Drone miscolor. Needs respray.";
+        }
+
+
     }
 }
