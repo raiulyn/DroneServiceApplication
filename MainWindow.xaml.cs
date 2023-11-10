@@ -30,6 +30,8 @@ namespace DroneServiceApplication
         public MainWindow()
         {
             InitializeComponent();
+
+            // Init all callbacks
             Add_Button.Click += Add_Button_Click;
             Clear_Button.Click += Clear_Button_Click;
             ClientName_TextBox.PreviewGotKeyboardFocus += Focus_Text;
@@ -38,8 +40,6 @@ namespace DroneServiceApplication
             DroneModel_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
             ServiceCost_TextBox.PreviewGotKeyboardFocus += Focus_Text;
             ServiceCost_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
-            ServiceTag_TextBox.PreviewGotKeyboardFocus += Focus_Text;
-            ServiceTag_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
             ServiceProblem_TextBox.PreviewGotKeyboardFocus += Focus_Text;
             ServiceProblem_TextBox.PreviewLostKeyboardFocus += Unfocus_Text;
             ServiceTag_UpDown.ValueChanged += IncrementServiceTagControl;
@@ -64,6 +64,7 @@ namespace DroneServiceApplication
         }
         private void Focus_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
+            // If selected, "unlock" the textbox
             TextBox textBox = (TextBox)sender;
             textBox.Foreground = Brushes.Black;
             if (textBox.Text == GetHintTexts(textBox))
@@ -73,6 +74,7 @@ namespace DroneServiceApplication
         }
         private void Unfocus_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
+            // If unselected, "lock" the textbox
             TextBox textBox = (TextBox)sender;
             if (textBox.Text == string.Empty)
             {
@@ -81,6 +83,7 @@ namespace DroneServiceApplication
         }
         private void ListView_UnSelect(object sender, RoutedEventArgs e)
         {
+            // Unselects all items in the Listview if clicked outside of the Listview
             ListView view = (ListView)sender;
             view.UnselectAll();
         }
@@ -114,7 +117,8 @@ namespace DroneServiceApplication
 
             int priority = GetServicePriority();
             float cost = float.Parse(ServiceCost_TextBox.Text);
-            Drone drone = new Drone(ClientName_TextBox.Text, DroneModel_TextBox.Text, ServiceProblem_TextBox.Text, CalculatePricing(cost, priority), ServiceTag_TextBox.Text);
+            int tag = ServiceTag_UpDown.Value.GetValueOrDefault();
+            Drone drone = new Drone(ClientName_TextBox.Text, DroneModel_TextBox.Text, ServiceProblem_TextBox.Text, CalculatePricing(cost, priority), ServiceTag_UpDown.Value.GetValueOrDefault());
             Clear();
             switch (priority)
             {
@@ -131,7 +135,8 @@ namespace DroneServiceApplication
                 default:
                     break;
             }
-            PrefillHints();
+
+            ServiceTag_UpDown.Value = GetAutoIncrement(tag);
         }
 
         /// <summary>
@@ -151,7 +156,7 @@ namespace DroneServiceApplication
                 default:
                     break;
             }
-            return MathF.Round(_value, 2, MidpointRounding.ToZero);
+            return MathF.Round(_value, 2, MidpointRounding.ToZero); // Round to two decimals
         }
 
         /// <summary>
@@ -219,50 +224,38 @@ namespace DroneServiceApplication
         /// <param name="e"></param>
         public void EnsureServiceCostIsNumeric(object sender, TextCompositionEventArgs e)
         {
-            var textBox = sender as TextBox;
-            if (textBox != null)
-            {
-                var regex = new Regex(@"^[0-9]*(?:\.[0-9]*)?$");
-                e.Handled = !regex.IsMatch(e.Text);
-            }
+            var textbox = sender as TextBox;
+
+            var regex = new Regex(@"^\d{1,4}(\.(\d{1,2})?)?$");
+            e.Handled = !regex.IsMatch(textbox.Text + e.Text);
         }
 
         /// <summary>
         /// 6.11 Create a custom method to increment the service tag control,
         /// this method must be called inside the “AddNewItem” method before the new service item is added to a queue.
         /// </summary>
-        /// <param name="_value"></param>
         public void IncrementServiceTagControl(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             IntegerUpDown updown = (IntegerUpDown)sender;
-            int newVal = (int)e.NewValue;
-            int maxVal = 4;
-            if (newVal < 0) { updown.Value = maxVal; }
-            if (newVal > maxVal) { updown.Value = 0; }
 
-            switch (newVal)
+            // Value Limiter
+            int minValue = 100;
+            int maxValue = 900;
+            if(e.NewValue != null)
             {
-                case 0:
-                    ServiceTag_TextBox.Text = "Tag 1";
-                    break;
-                case 1:
-                    ServiceTag_TextBox.Text = "Tag 2";
-                    break;
-                case 2:
-                    ServiceTag_TextBox.Text = "Tag 3";
-                    break;
-                case 3:
-                    ServiceTag_TextBox.Text = "Tag 4";
-                    break;
-                case 4:
-                    ServiceTag_TextBox.Text = "Tag 5";
-                    break;
-                default:
-                    break;
+                int newVal = (int)e.NewValue;
+                if (newVal < minValue)
+                {
+                    updown.Value = minValue;
+                }
+                else if (newVal > maxValue) 
+                {
+                    updown.Value = maxValue;
+                }
             }
-            ServiceTag_TextBox.Foreground = Brushes.Black;
+            ServiceTag_UpDown.Foreground = Brushes.Black;
         }
-
+        
         /// <summary>
         /// 6.12 Create a mouse click method for the regular service ListView that will display the Client Name and Service Problem in the related textboxes.
         /// </summary>
@@ -279,8 +272,8 @@ namespace DroneServiceApplication
                 ServiceProblem_TextBox.Foreground = Brushes.Black;
                 ServiceCost_TextBox.Text = drone.GetServiceCost().ToString();
                 ServiceCost_TextBox.Foreground = Brushes.Black;
-                ServiceTag_TextBox.Text = drone.GetServiceTag();
-                ServiceTag_TextBox.Foreground = Brushes.Black;
+                ServiceTag_UpDown.Value = drone.GetServiceTag();
+                ServiceTag_UpDown.Foreground = Brushes.Black;
             }
             else
             {
@@ -304,8 +297,8 @@ namespace DroneServiceApplication
                 ServiceProblem_TextBox.Foreground = Brushes.Black;
                 ServiceCost_TextBox.Text = drone.GetServiceCost().ToString();
                 ServiceCost_TextBox.Foreground = Brushes.Black;
-                ServiceTag_TextBox.Text = drone.GetServiceTag();
-                ServiceTag_TextBox.Foreground = Brushes.Black;
+                ServiceTag_UpDown.Value = drone.GetServiceTag();
+                ServiceTag_UpDown.Foreground = Brushes.Black;
             }
             else
             {
@@ -328,6 +321,7 @@ namespace DroneServiceApplication
             }
             Drone drone = RegularService.Dequeue();
             FinishedList.Add(drone);
+            SetStatusMessage("Moved " + drone.GetClientName() + " of " + drone.GetDroneModel() + " to Completed List");
 
             DisplayFinishedServices();
             DisplayRegularService();
@@ -349,6 +343,7 @@ namespace DroneServiceApplication
             }
             Drone drone = ExpressService.Dequeue();
             FinishedList.Add(drone);
+            SetStatusMessage("Moved " + drone.GetClientName() + " of " + drone.GetDroneModel() + " to Completed List");
 
             DisplayFinishedServices();
             DisplayExpressService();
@@ -363,8 +358,10 @@ namespace DroneServiceApplication
         public void DoubleClickFinishedListItem(object sender, MouseButtonEventArgs e)
         {
             ListView lv = (ListView)sender;
+            SetStatusMessage("Removed " + FinishedList.ElementAt(lv.SelectedIndex).GetClientName() + " of " + FinishedList.ElementAt(lv.SelectedIndex).GetDroneModel());
             FinishedList.RemoveAt(lv.SelectedIndex);
             DisplayFinishedServices();
+            
         }
 
         /// <summary>
@@ -376,7 +373,7 @@ namespace DroneServiceApplication
             DroneModel_TextBox.Text = string.Empty;
             ServiceProblem_TextBox.Text = string.Empty;
             ServiceCost_TextBox.Text = string.Empty;
-            ServiceTag_TextBox.Text = string.Empty;
+            ServiceTag_UpDown.Value = 0;
             PrefillHints();
         }
 
@@ -421,11 +418,6 @@ namespace DroneServiceApplication
                 msg += "Please input Service Cost." + Environment.NewLine;
                 invalidInputs++;
             }
-            if (string.IsNullOrEmpty(ServiceTag_TextBox.Text) || ServiceTag_TextBox.Text == GetHintTexts(ServiceTag_TextBox))
-            {
-                msg += "Please input Service Tag." + Environment.NewLine;
-                invalidInputs++;
-            }
 
             if (invalidInputs > 0)
             {
@@ -464,8 +456,6 @@ namespace DroneServiceApplication
                     return "Enter Drone Model...";
                 case "ServiceCost_TextBox":
                     return "Enter Service Cost...";
-                case "ServiceTag_TextBox":
-                    return "Enter Service Tag...";
                 case "ServiceProblem_TextBox":
                     return "Enter Service Problem...";
                 default:
@@ -486,9 +476,6 @@ namespace DroneServiceApplication
                 case "ServiceCost_TextBox":
                     textbox.Text = "Enter Service Cost...";
                     break;
-                case "ServiceTag_TextBox":
-                    textbox.Text = "Enter Service Tag...";
-                    break;
                 case "ServiceProblem_TextBox":
                     textbox.Text = "Enter Service Problem...";
                     break;
@@ -504,34 +491,35 @@ namespace DroneServiceApplication
             DroneModel_TextBox.Foreground = Brushes.Gray;
             ServiceCost_TextBox.Text = "Enter Service Cost...";
             ServiceCost_TextBox.Foreground = Brushes.Gray;
-            ServiceTag_TextBox.Text = "Enter Service Tag...";
-            ServiceTag_TextBox.Foreground = Brushes.Gray;
             ServiceProblem_TextBox.Text = "Enter Service Problem...";
             ServiceProblem_TextBox.Foreground = Brushes.Gray;
+            ServiceTag_UpDown.Value = 100;
         }
 
-        private bool isPrefillingTestingData = false;
-        private void PrefillTestingData()
+        private int autoTag = 100;
+        private int GetAutoIncrement(int _value)
         {
-            ClientName_TextBox.Text = "James";
-            DroneModel_TextBox.Text = "Model K";
-            ServiceCost_TextBox.Text = "220";
-            ServiceTag_TextBox.Text = "Tag 2";
-            ServiceProblem_TextBox.Text = "Drone ain't working. Needs full service!";
-
-            ClientName_TextBox.Text = "Ash";
-            DroneModel_TextBox.Text = "Model L";
-            ServiceCost_TextBox.Text = "150";
-            ServiceTag_TextBox.Text = "Tag 1";
-            ServiceProblem_TextBox.Text = "Drone misbehaving. Need parts inspection.";
-
-            ClientName_TextBox.Text = "Steve";
-            DroneModel_TextBox.Text = "Model P";
-            ServiceCost_TextBox.Text = "50.50";
-            ServiceTag_TextBox.Text = "Tag 4";
-            ServiceProblem_TextBox.Text = "Drone miscolor. Needs respray.";
+            switch (_value)
+            {
+                case >= 700 and < 800:
+                    return 800;
+                case >= 600 and < 700:
+                    return 700;
+                case >= 500 and < 600:
+                    return 600;
+                case >= 400 and < 500:
+                    return 500;
+                case >= 300 and < 400:
+                    return 400;
+                case >= 200 and < 300:
+                    return 300;
+                case >= 100 and < 200:
+                    return 200;
+                default:
+                    break;
+            }
+            return 0;
         }
-
 
     }
 }

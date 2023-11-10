@@ -23,11 +23,11 @@ namespace DroneServiceApplication
         private string droneModel = string.Empty;
         private string serviceProblem = string.Empty;
         private float serviceCost = 0;
-        private string serviceTag = string.Empty;
+        private int serviceTag = 0;
 
         public Drone() { }
 
-        public Drone(string _clientName, string _droneModel, string _serviceProblem, float _serviceCost, string _serviceTag)
+        public Drone(string _clientName, string _droneModel, string _serviceProblem, float _serviceCost, int _serviceTag)
         {
             clientName = _clientName;
             droneModel = _droneModel;
@@ -69,11 +69,11 @@ namespace DroneServiceApplication
         {
             serviceCost = _value;
         }
-        public string GetServiceTag()
+        public int GetServiceTag()
         {
             return serviceTag;
         }
-        public void SetServiceTag(string _value)
+        public void SetServiceTag(int _value)
         {
             serviceTag = _value;
         }

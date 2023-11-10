@@ -21,14 +21,14 @@
 
         <TextBox x:Name="ClientName_TextBox" HorizontalAlignment="Left" Margin="125,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" UndoLimit="10" Height="28"/>
         <TextBox x:Name="DroneModel_TextBox" HorizontalAlignment="Left" Margin="125,119,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" UndoLimit="10" Height="28"/>
-        <TextBox x:Name="ServiceProblem_TextBox" HorizontalAlignment="Left" Margin="125,193,0,0" TextWrapping="Wrap" Width="550" UndoLimit="10" Height="64" VerticalAlignment="Top"/>
+        <TextBox x:Name="ServiceProblem_TextBox" HorizontalAlignment="Left" Margin="125,193,0,0" TextWrapping="Wrap" Width="550" UndoLimit="10" Height="64" VerticalAlignment="Top" AcceptsReturn="True"/>
         <TextBox x:Name="ServiceCost_TextBox" HorizontalAlignment="Left" Margin="125,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" UndoLimit="10" Height="28"/>
         <Button x:Name="Add_Button" Content="Add Service" HorizontalAlignment="Left" Margin="234,262,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
         <Button x:Name="Clear_Button" Content="Clear" HorizontalAlignment="Left" Margin="408,262,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="FinishRegular_Button" Content="Finish Regular Service" HorizontalAlignment="Left" Margin="122,484,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
-        <Button x:Name="FinishExpress_Button" Content="Finish Express Service" HorizontalAlignment="Left" Margin="519,484,0,0" VerticalAlignment="Top" Height="30" Width="152"/>
+        <Button x:Name="FinishRegular_Button" Content="Finish Regular Service" HorizontalAlignment="Left" Margin="122,484,0,0" VerticalAlignment="Top" Height="30" Width="152" Background="#FF3BEA4E"/>
+        <Button x:Name="FinishExpress_Button" Content="Finish Express Service" HorizontalAlignment="Left" Margin="519,484,0,0" VerticalAlignment="Top" Height="30" Width="152" Background="#FF3BEA4E"/>
 
-        <GroupBox Header="Regular" Margin="10,297,0,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="385" Height="182" VerticalAlignment="Top" Background="#FF59E8E4">
+        <GroupBox Header="Regular" Margin="10,297,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" Background="#FF59E8E4" HorizontalAlignment="Left" Width="385">
             <StackPanel Orientation="Horizontal" Height="142">
                 <ListView x:Name="Regular_ListView">
                     <ListView.View>
@@ -43,7 +43,7 @@
                 </ListView>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Express" Margin="400,297,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" HorizontalAlignment="Left" Width="390" Background="#FF59E8E4">
+        <GroupBox Header="Express" Margin="400,297,0,0" RenderTransformOrigin="0.5,0.5" Height="182" VerticalAlignment="Top" Background="#FF59E8E4" HorizontalAlignment="Left" Width="390">
             <StackPanel Orientation="Horizontal" Height="142">
                 <ListView x:Name="Express_ListView">
                     <ListView.View>
@@ -58,7 +58,7 @@
                 </ListView>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Completed" Margin="10,519,0,0" Height="193" VerticalAlignment="Top" HorizontalAlignment="Left" Width="780">
+        <GroupBox Header="Completed" Margin="10,519,10,0" Height="193" VerticalAlignment="Top">
             <ListView x:Name="Completed_ListView" Margin="10,0,15,0">
                 <ListView.View>
                     <GridView>
@@ -69,6 +69,7 @@
                         <GridViewColumn Header="Service Tag" DisplayMemberBinding="{Binding Tag}"/>
                     </GridView>
                 </ListView.View>
+                <ComboBox Width="120"/>
             </ListView>
         </GroupBox>
         <StackPanel x:Name="Radios_Stack" Orientation="Horizontal" Margin="618,84,0,0" HorizontalAlignment="Left" Width="160" Height="30" VerticalAlignment="Top">
@@ -76,8 +77,7 @@
             <RadioButton x:Name="Radio_Express" Content="Express" Width="68"/>
         </StackPanel>
 
-        <wpfx:IntegerUpDown x:Name="ServiceTag_UpDown" Height="30" Margin="656,156,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="19" AllowTextInput="False"/>
-        <TextBox x:Name="ServiceTag_TextBox" HorizontalAlignment="Left" Margin="451,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" UndoLimit="10" Height="28" IsReadOnly="True"/>
+        <wpfx:IntegerUpDown x:Name="ServiceTag_UpDown" Height="30" Margin="464,156,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="211" AllowTextInput="False"/>
 
 
 
